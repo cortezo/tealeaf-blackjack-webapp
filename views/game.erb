@@ -1,3 +1,29 @@
 <h3>This is the game</h3>
 
-<p>Hi, <%= @username %></p>
+<p>Hi, <%= session[:player_name] %></p>
+
+Dealer's cards:
+<ul>
+  <% session[:dealer_cards].each do |card| %>
+    <li><%= card.to_s%></li>
+  <% end %>
+</ul>
+
+Player's cards:
+<ul>
+  <% session[:player_cards].each do |card| %>
+    <li><%= card.to_s%></li>
+  <% end %>
+</ul>
+
+<% if session[:player_stand?] == true %>
+  <p><%= session[:player_name] %> Stands</p>
+<% end %>
+
+<form action='/hit' method='post'>
+  <input type='text' name="bet"/>
+  <input type="submit" class="btn" value="Hit"/>
+</form>
+<form action='/stand' method='post'>
+  <input type="submit" class="btn" value="Stand"/>
+</form>
