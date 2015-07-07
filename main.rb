@@ -7,10 +7,10 @@ use Rack::Session::Cookie,  :key => 'rack.session',
 
 get '/' do
   if session[:player_name]
-    redirect :game
+    redirect '/game'
   else
     session[:initialized] = false
-    redirect :set_player
+    redirect '/set_player'
   end
 end
 
@@ -37,9 +37,8 @@ get '/game' do
   if session[:player_hit?] == true
     session[:player_cards] << session[:deck].pop
     session[:player_hit?] = false
-    redirect '/game'
   elsif session[:player_stand?] == true
-
+    # start dealer turn
   else
 
   end
@@ -53,7 +52,7 @@ end
 
 post '/new_player' do
   session[:player_name] = params[:player_name]
-  redirect :game
+  redirect '/game'
 end
 
 get '/bet' do
@@ -68,4 +67,10 @@ end
 post '/stand' do
   session[:player_stand?] = true
   redirect '/game'
+end
+
+get '/startover' do
+  session[:player_name] = nil
+  session[:initialized] = false
+  redirect '/'
 end
