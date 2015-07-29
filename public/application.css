@@ -1,5 +1,22 @@
+body {
+  padding-top: 65px;
+}
+
 .card {
   margin: 0px 5px 0px 5px;
   border: 1px solid #7D7D7D;
   box-shadow: 5px 5px 5px #7D7D7D;
+}
+
+form#player_hit_form {
+  float: left;
+  margin-right: 10px;
+}
+
+form#player_stand_form {
+  float: left;
+}
+
+form#dealer_next_card_form {
+  float: left;
 }
