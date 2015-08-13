@@ -2,10 +2,26 @@ body {
   padding-top: 65px;
 }
 
+.messages {
+  font-weight: bold;
+}
+
 .card {
   margin: 0px 5px 0px 5px;
   border: 1px solid #7D7D7D;
   box-shadow: 5px 5px 5px #7D7D7D;
+}
+
+.play-again-buttons {
+  margin-left: 10px;
+}
+
+.startover-button {
+  margin-left: 30px;
+}
+
+.play-again-text {
+  margin-left: 30px;
 }
 
 form#player_hit_form {
@@ -14,6 +30,10 @@ form#player_hit_form {
 }
 
 form#player_stand_form {
+  float: left;
+}
+
+form#play_again_form {
   float: left;
 }
 

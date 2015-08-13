@@ -1,19 +1,25 @@
-<h3>You're playing.... Blackjack!</h3>
-
 <div class="well well-small">
   <h5>Dealer's cards:</h5>
   <% session[:dealer_cards].each_with_index do |card, i| %>
-    <% if i == 0 && session[:player_stand?] == false && session[:game_over?] == false %>
-      <img class='card' src="images/cards/cover.jpg"></span>
+    <% if i == 0 && @show_dealer_hand == false %>
+      <img class='card' src="/images/cards/cover.jpg">
     <% else %>
       <%= get_card_image(card) %>
     <% end %>
   <% end %>
-  <% if session[:game_over?] || session[:player_stand?] %>
+
+  <% if @show_dealer_hand %>
     </br></br>
     <p>Value: <%= hand_value(session[:dealer_cards]).to_s %></p>
   <% end %>
+
+  <% if @show_dealer_hit_button %>
+    <form action='/game/dealer/hit' method='post'>
+      <input type="submit" class="btn btn-primary" value="Reveal dealer's next card."/>
+    </form>
+  <% end %>
 </div>
+
 </br>
 
 <div class="well well-small">
@@ -25,25 +31,16 @@
   <p>Value: <%= hand_value(session[:player_cards]).to_s %></p>
 </div>
 
-
-
-<% if session[:game_over?] == true %> <!-- Display end-result of game -->
-  <form action='/startover' method='post'>
-    <input type="submit" class="btn btn-success" value="Start Over"/>
-  </form>
-<% elsif session[:player_stand?] == false %> <!-- Player turn in-progress -->
-  <form id="player_hit_form" action='/player_hit' method='post'>
+<% if @show_hit_and_stand_buttons %>
+  <form id="player_hit_form" action='/player/hit' method='post'>
     <input type="submit" class="btn btn-info" value="Hit"/>
   </form>
-  <form id="player_stand_form" action='/player_stand' method='post'>
+  <form id="player_stand_form" action='/player/stand' method='post'>
     <input type="submit" class="btn btn-warning" value="Stand"/>
   </form>
-<% else %>  <!-- Dealer turn in-progress -->
-  <form id="dealer_next_card_form" action='/dealer_next_card' method='post'>
-    <input type="submit" class="btn btn-primary" value="Next Card"/>
-  </form>
+<% elsif @show_play_again_button %>
+  
 <% end %>
-
 
 <!--
   Conditions for button display.
