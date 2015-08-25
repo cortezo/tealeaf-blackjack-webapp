@@ -188,12 +188,6 @@ get '/game/compare' do
   erb :game
 end
 
-=begin
-get '/bet' do
-  @player_name = session[:player_name]
-end
-=end
-
 ####### POST Methods #######
 post '/new_player' do
   if params[:player_name].empty?
