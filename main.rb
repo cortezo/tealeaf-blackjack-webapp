@@ -35,9 +35,6 @@ helpers do
   end
 
   def get_card_image(card)
-    suit = ""
-    rank = ""
-
     suit = case card[0]
       when "H" then "hearts"
       when "D" then "diamonds"
@@ -121,7 +118,7 @@ end
 
 ####### GET Methods #######
 get '/' do
-  if session[:initialized == true]
+  if session[:initialized]
     erb :game
   else
     redirect '/set_player'
@@ -135,7 +132,7 @@ end
 
 get '/game' do
 
-  if session[:initialized] == false
+  if !session[:initialized]
     # Create a deck and put it in the session
     suits = ['H', 'D', 'C', 'S']
     values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
@@ -181,7 +178,7 @@ get '/game/compare' do
   @show_dealer_hand = true
   @show_play_again_button = true
 
-  if blackjack? == false
+  if !blackjack?
     get_winner_message
   end
 
@@ -209,7 +206,7 @@ post '/player/hit' do
     halt redirect '/game/compare'
   end
 
-  erb :game
+  redirect '/game'
 end
 
 post '/player/stand' do
