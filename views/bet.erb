@@ -12,6 +12,6 @@
     <input type="submit" class="btn btn-primary" value="Place Bet"/>
   </form>
 
-  <p><%= session[:player_name] %>'s available cash:  $<%= session[:player_cash] %></p>
+  <p><%= session[:player_name] %>'s available cash:  $<%= session[:player_cash].to_i %></p>
 <% end %>
   

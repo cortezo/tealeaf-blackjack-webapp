@@ -61,13 +61,13 @@ helpers do
     elsif result == "push"
       session[:player_cash] += session[:current_bet]
     end
+
+    # Reset current_bet to zero to prevent abuse by reloading /game/compare page.
+    session[:current_bet] = 0
   end
 
 
   def get_winner_message
-    @show_hit_and_stand_buttons = false
-    @show_dealer_hit_button = false
-
     player_score = hand_value(session[:player_cards])
     dealer_score = hand_value(session[:dealer_cards])
 
@@ -76,44 +76,29 @@ helpers do
     @success = nil
     @info = nil
 
-    if player_score > BLACKJACK_AMOUNT
-      @error = "#{session[:player_name]} has busted with #{player_score}.  You lose!"
+    if session[:blackjack?]
+      if player_score == dealer_score
+        @info = "Dealer and #{session[:player_name]} both got Blackjack!  Push!"
+        distribute_winnings("push")
+      elsif player_score == BLACKJACK_AMOUNT
+        @success = "#{session[:player_name]} got Blackjack!  You win $#{session[:current_bet] * 2.5}!"
+        distribute_winnings("blackjack")
+      elsif dealer_score == BLACKJACK_AMOUNT
+        @error = "Dealer got Blackjack.  You lose $#{session[:current_bet]}."
+      end
+    elsif player_score > BLACKJACK_AMOUNT
+      @error = "#{session[:player_name]} has busted with #{player_score}.  You lose $#{session[:current_bet]}!"
     elsif dealer_score > BLACKJACK_AMOUNT
-      @success = "Dealer has busted with #{dealer_score}.  You win!"
+      @success = "Dealer has busted with #{dealer_score}.  You win $#{session[:current_bet] * 2}!"
       distribute_winnings("win")
     elsif player_score == dealer_score
       @info = "Dealer and #{session[:player_name]} tie with #{player_score}.  Push!"
       distribute_winnings("push")
     elsif player_score > dealer_score
-      @success = "#{session[:player_name]} wins with #{player_score}!"
+      @success = "#{session[:player_name]} wins with #{player_score}!  You win $#{session[:current_bet] * 2}!"
       distribute_winnings("win")
     else
-      @error = "Dealer wins with #{dealer_score}!"
-    end
-  end
-
-  def blackjack?
-    # It is only a Blackjack! if it is 21 with two cards, otherwise it is simply a score of 21.
-    if session[:player_cards].count > 2 || session[:dealer_cards].count >2
-      return false
-    end
-
-    player_score = hand_value(session[:player_cards])
-    dealer_score = hand_value(session[:dealer_cards])
-
-    if player_score == BLACKJACK_AMOUNT && dealer_score == BLACKJACK_AMOUNT
-      @info = "Dealer and #{session[:player_name]} both got Blackjack!  Push!"
-      distribute_winnings("push")
-      true
-    elsif player_score == BLACKJACK_AMOUNT
-      @success = "#{session[:player_name]} got Blackjack!  You win!"
-      distribute_winnings("blackjack")
-      true
-    elsif dealer_score == BLACKJACK_AMOUNT
-      @error = "Dealer got Blackjack.  You lose!"
-      true
-    else
-      false
+      @error = "Dealer wins with #{dealer_score}!  You lose $#{session[:current_bet]}."
     end
   end
 end
@@ -170,7 +155,11 @@ get '/game' do
       session[:player_cards] << session[:deck].pop
     end
 
-    if blackjack?
+    session[:blackjack?] = false
+
+    # REVISIT... possibly confusing use of variable names
+    if hand_value(session[:dealer_cards]) == BLACKJACK_AMOUNT || hand_value(session[:player_cards]) == BLACKJACK_AMOUNT
+      session[:blackjack?] = true
       redirect '/game/compare'
     end
 
@@ -199,12 +188,11 @@ end
 
 get '/game/compare' do
   @show_hit_and_stand_buttons = false
+  @show_dealer_hit_button = false
   @show_dealer_hand = true
   @show_play_again_button = true
 
-  if !blackjack?
-    get_winner_message
-  end
+  get_winner_message
 
   erb :game
 end
