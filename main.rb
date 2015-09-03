@@ -56,6 +56,17 @@ helpers do
     "<img class='card' src='/images/cards/#{suit}_#{rank}.jpg'>"
   end
 
+  def distribute_winnings(result)
+    if result == "win"
+      session[:player_cash] += session[:current_bet] * 2
+    elsif result == "blackjack"
+      session[:player_cash] += session[:current_bet] * 2.5
+    elsif result == "push"
+      session[:player_cash] += session[:current_bet]
+    end
+  end
+
+
   def get_winner_message
     @show_hit_and_stand_buttons = false
     @show_dealer_hit_button = false
@@ -72,10 +83,13 @@ helpers do
       @error = "#{session[:player_name]} has busted with #{player_score}.  You lose!"
     elsif dealer_score > BLACKJACK_AMOUNT
       @success = "Dealer has busted with #{dealer_score}.  You win!"
+      distribute_winnings("win")
     elsif player_score == dealer_score
       @info = "Dealer and #{session[:player_name]} tie with #{player_score}.  Push!"
+      distribute_winnings("push")
     elsif player_score > dealer_score
       @success = "#{session[:player_name]} wins with #{player_score}!"
+      distribute_winnings("win")
     else
       @error = "Dealer wins with #{dealer_score}!"
     end
@@ -92,9 +106,11 @@ helpers do
 
     if player_score == BLACKJACK_AMOUNT && dealer_score == BLACKJACK_AMOUNT
       @info = "Dealer and #{session[:player_name]} both got Blackjack!  Push!"
+      distribute_winnings("push")
       true
     elsif player_score == BLACKJACK_AMOUNT
       @success = "#{session[:player_name]} got Blackjack!  You win!"
+      distribute_winnings("blackjack")
       true
     elsif dealer_score == BLACKJACK_AMOUNT
       @error = "Dealer got Blackjack.  You lose!"
@@ -131,6 +147,14 @@ end
 get '/set_player' do
   session[:initialized] = false
   erb :new_user_form
+end
+
+get '/bet' do
+  if session[:player_cash] <= 0
+    @display_start_over_button = true
+  end
+
+  erb :bet
 end
 
 get '/game' do
@@ -198,8 +222,9 @@ post '/new_player' do
     halt erb(:new_user_form)
   end
 
+  session[:player_cash] = 1000
   session[:player_name] = params[:player_name]
-  redirect '/game'
+  redirect '/bet'
 end
 
 post '/player/hit' do
@@ -222,6 +247,26 @@ post '/game/dealer/hit' do
   redirect '/game/dealer'
 end
 
+post '/player/bet' do
+  bet_amount = params[:bet_amount].to_i
+
+  if params[:bet_amount].match(/\D/)
+    @error = "Your entry contained a non-digit character.  Please enter a valid bet by entering a whole number greater than zero and less than or equal to your available cash."
+    halt erb(:bet)
+  elsif bet_amount.to_i <= 0
+    @error = "Your entry must be greater than zero.  Please enter a valid bet by entering a whole number greater than zero and less than or equal to your available cash."
+    halt erb(:bet)
+  elsif bet_amount > session[:player_cash]
+    @error = "You don't have that much money to bet.  Please enter a valid bet by entering a whole number greater than zero and less than or equal to your available cash."
+    halt erb(:bet)
+  else
+    session[:current_bet] = bet_amount
+    session[:player_cash] -= bet_amount
+  end
+
+  redirect '/game'
+end
+
 post '/startover' do
   session[:initialized] = false
   redirect '/set_player'
@@ -229,7 +274,7 @@ end
 
 post '/play_again' do
   session[:initialized] = false
-  redirect '/game'
+  redirect '/bet'
 end
 
 post '/game_over' do
