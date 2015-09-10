@@ -227,7 +227,7 @@ post '/player/stand' do
   redirect '/game/dealer'   
 end
 
-post '/game/dealer/hit' do
+post '/dealer/hit' do
   session[:dealer_cards] << session[:deck].pop
   redirect '/game/dealer'
 end

@@ -4,6 +4,8 @@
     <title>My First App</title>
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/application.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type='text/javascript' src='/script.js'></script>
   </head>
 
   <div class="navbar navbar-default navbar-fixed-top">
@@ -14,34 +16,18 @@
             <a class="brand">Blackjack</a>
           </li>
           <li class="divider-vertical"></li>
-          <% if @show_play_again_button %>
-            <li>
-              <p class="navbar-text play-again-text">Play Again?</p>
-            </li>
-            <li>
-              <form class="navbar-form play-again-buttons" action='/play_again' method='post'>
-                <input type="submit" class="btn btn-success" value="Yes"/>
-              </form>
-            </li>
-            <li>
-              <form class="navbar-form play-again-buttons" action='/game_over' method='post'>
-                <input type="submit" class="btn btn-warning" value="No" />
-              </form>
-            </li>
-          <% else %>
-            <li>
-              <form class="navbar-form startover-button" action='/startover' method='post'>
-                <input type="submit" class="btn btn-info" value="Start Over"/>
-              </form>
-            </li>
-          <% end %>
+          <li>
+            <form class="navbar-form startover-button" action='/startover' method='post'>
+              <input type="submit" class="btn btn-info" value="Start Over"/>
+            </form>
+          </li>
         </ul>
       </div>
     </div>
   </div>
 
   <body>
-    <div class="container messages">
+    <div class='messages'>
       <% if @error %>
         <div class="alert alert-error"><%=@error%></div>
       <% end %>
@@ -51,7 +37,8 @@
       <% if @info %>
         <div class="alert alert-info"><%=@info%></div>
       <% end %>
-
+    </div>
+    <div class="container">
       <%= yield %>
     </div>
   </body>

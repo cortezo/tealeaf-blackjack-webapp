@@ -12,25 +12,28 @@ body {
   box-shadow: 5px 5px 5px #7D7D7D;
 }
 
-.play-again-buttons {
-  margin-left: 10px;
+form#play_again_yes {
+  margin-right: 10px;
+}
+
+form#play_again_no {
+
 }
 
 .startover-button {
   margin-left: 30px;
 }
 
-.play-again-text {
+.play_again_text {
   margin-left: 30px;
 }
 
 form#player_hit_form {
-  float: left;
   margin-right: 10px;
 }
 
 form#player_stand_form {
-  float: left;
+
 }
 
 form#play_again_form {
