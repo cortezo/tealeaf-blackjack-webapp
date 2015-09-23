@@ -11,8 +11,8 @@ function player_hits() {
       type: 'POST',
       url: '/player/hit',
     }).done(function(msg) {
-      $('#player_area').replaceWith(function() {
-        return $(msg).find('#player_area');
+      $('#game').replaceWith(function() {
+        return $(msg).find('#game');
       });
     });
 
