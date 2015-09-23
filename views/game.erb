@@ -1,5 +1,16 @@
-<!-- Dealer's area -->
 <div id='game'>
+  <div class='messages'>
+    <% if @loser %>
+      <div class="alert alert-error"><%=@loser%></div>
+    <% end %>
+    <% if @winner %>
+      <div class="alert alert-success"><%=@winner%></div>
+    <% end %>
+    <% if @tie %>
+      <div class="alert alert-info"><%=@tie%></div>
+    <% end %>
+  </div>
+  <!-- Dealer's area -->
   <div id='dealer_area'>
     <div class="well well-small">
       <h5>Dealer's Hand</h5>
@@ -69,12 +80,3 @@
     </div>
   </div>
 </div>
-
-<!--
-  Conditions for button display.
-
-  Player busts - Remove Hit/Stay, display loser message, display results, display Start Over button
-  Player stands - Remove Hit/Stay, display Next Card button
-  Dealer stands - Remove Hit/Stay, display results
-  Dealer busts - Remove Hit/Stay and Next Card buttons, calculate winner and display message, display results, display Start Over button
--->

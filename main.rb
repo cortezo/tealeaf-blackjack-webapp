@@ -72,33 +72,33 @@ helpers do
     dealer_score = hand_value(session[:dealer_cards])
 
     # Clear all error messages to display only victory message.
-    @error = nil
-    @success = nil
-    @info = nil
+    @tie = nil
+    @winner = nil
+    @loser = nil
 
     if session[:blackjack?]
       if player_score == dealer_score
-        @info = "Dealer and #{session[:player_name]} both got Blackjack!  Push!"
+        @tie = "Dealer and #{session[:player_name]} both got Blackjack!  Push!"
         distribute_winnings("push")
       elsif player_score == BLACKJACK_AMOUNT
-        @success = "#{session[:player_name]} got Blackjack!  You win $#{session[:current_bet] * 2.5}!"
+        @winner = "#{session[:player_name]} got Blackjack!  You win $#{session[:current_bet] * 2.5}!"
         distribute_winnings("blackjack")
       elsif dealer_score == BLACKJACK_AMOUNT
-        @error = "Dealer got Blackjack.  You lose $#{session[:current_bet]}."
+        @loser = "Dealer got Blackjack.  You lose $#{session[:current_bet]}."
       end
     elsif player_score > BLACKJACK_AMOUNT
-      @error = "#{session[:player_name]} has busted with #{player_score}.  You lose $#{session[:current_bet]}!"
+      @loser = "#{session[:player_name]} has busted with #{player_score}.  You lose $#{session[:current_bet]}!"
     elsif dealer_score > BLACKJACK_AMOUNT
-      @success = "Dealer has busted with #{dealer_score}.  You win $#{session[:current_bet] * 2}!"
+      @winner = "Dealer has busted with #{dealer_score}.  You win $#{session[:current_bet] * 2}!"
       distribute_winnings("win")
     elsif player_score == dealer_score
-      @info = "Dealer and #{session[:player_name]} tie with #{player_score}.  Push!"
+      @tie = "Dealer and #{session[:player_name]} tie with #{player_score}.  Push!"
       distribute_winnings("push")
     elsif player_score > dealer_score
-      @success = "#{session[:player_name]} wins with #{player_score}!  You win $#{session[:current_bet] * 2}!"
+      @winner = "#{session[:player_name]} wins with #{player_score}!  You win $#{session[:current_bet] * 2}!"
       distribute_winnings("win")
     else
-      @error = "Dealer wins with #{dealer_score}!  You lose $#{session[:current_bet]}."
+      @loser = "Dealer wins with #{dealer_score}!  You lose $#{session[:current_bet]}."
     end
   end
 end
